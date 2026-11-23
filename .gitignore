@@ -1,0 +1,27 @@
+# Java & Maven
+target/
+*.jar
+*.war
+*.class
+.mvn/timing.properties
+
+# Terraform & AWS
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+crash.log
+override.tf
+
+# Variables de entorno y secretos
+.env
+.env.local
+*.pem
+*.key
+
+# IDEs y Sistema Operativo
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
