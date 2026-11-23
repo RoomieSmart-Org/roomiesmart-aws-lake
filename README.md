@@ -1,38 +1,25 @@
-# 🏠 RoomieSmart AWS Lake
+🏠 RoomieSmart AWS Lake
 
-![Java](https://img.shields.io/badge/Java-21-orange?logo=openjdk)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen?logo=springboot)
-![AWS](https://img.shields.io/badge/AWS-Cloud%20Native-232F3E?logo=amazonaws)
-![Apache Kafka](https://img.shields.io/badge/Apache%20Kafka-Event%20Bus-231F20?logo=apachekafka)
-![RabbitMQ](https://img.shields.io/badge/RabbitMQ-Task%20Queue-FF6600?logo=rabbitmq)
-![Terraform](https://img.shields.io/badge/Terraform-IaC-7B42BC?logo=terraform)
-![Docker](https://img.shields.io/badge/Docker-Containers-2496ED?logo=docker)
+!Java !Spring Boot !AWS !Apache Kafka !RabbitMQ !Terraform !Docker
 
-Plataforma distribuida *cloud-native* orientada a eventos (EDA) para la gestión automatizada de edificios residenciales bajo el modelo **co-living**. Resuelve la división injusta de servicios básicos y los conflictos de convivencia mediante telemetría IoT en tiempo real, facturación exacta basada en consumo físico y resolución objetiva de infracciones impulsada por Inteligencia Artificial (**Amazon Bedrock**).
+A distributed, cloud-native, event-driven architecture (EDA) platform designed for the automated management of residential buildings under the co-living model. It addresses unfair utility cost allocation and roommate conflicts through real-time IoT telemetry, accurate billing based on actual consumption, and objective violation resolution powered by Artificial Intelligence (Amazon Bedrock).
 
----
-
-## 🏛️ Pilares de la Arquitectura
-
-* **Arquitectura Orientada a Eventos (EDA) Híbrida:** Desacoplamiento total mediante **Apache Kafka** (ingesta masiva de telemetría IoT) y **RabbitMQ** (colas de tareas transaccionales con *Dead-Letter Queues*).
-* **CQRS y Persistencia Políglota:** Separación estricta de lecturas analíticas y escrituras operativas distribuidas en **11 almacenes de datos especializados** (Amazon Aurora, RDS, DynamoDB, S3/Athena Data Lake, ElastiCache Redis, DocumentDB, Keyspaces, Supabase, entre otros).
-* **Arquitectura Hexagonal:** Cada microservicio en Java Spring Boot separa la lógica de dominio de los adaptadores de infraestructura y persistencia.
-* **Despliegue Efímero (*Burst Deployment*):** Infraestructura 100% definida como código con **Terraform** y desplegada en **Amazon EKS / AWS Fargate** bajo demanda para validación académica a costo real de $0 USD usando créditos de AWS Academy Learner Lab.
-
----
-
-## 📂 Estructura del Monorepositorio
-
-```text
+🏛️ Architecture Pillars
+Hybrid Event-Driven Architecture (EDA): Complete decoupling through Apache Kafka (high-volume IoT telemetry ingestion) and RabbitMQ (transactional task queues with Dead-Letter Queues).
+CQRS and Polyglot Persistence: Strict separation of analytical reads and operational writes across 11 specialized data stores (Amazon Aurora, RDS, DynamoDB, S3/Athena Data Lake, ElastiCache Redis, DocumentDB, Keyspaces, Supabase, among others).
+Hexagonal Architecture: Each Java Spring Boot microservice separates domain logic from infrastructure and persistence adapters.
+Ephemeral Deployment (Burst Deployment): Infrastructure fully defined as code using Terraform and deployed on Amazon EKS / AWS Fargate on demand, enabling validation for academic purposes at a real cost of $0 USD using AWS Academy Learner Lab credits.
+📂 Monorepository Structure
+text
 roomiesmart-aws-lake/
 ├── .github/
-│   ├── workflows/                 # Pipelines CI/CD modulares por microservicio
-│   └── pull_request_template.md   # Plantilla de PR vinculada a Jira
-├── docs/                          # SAD, evaluación ATAM/QuaDAI y diagramas
+│   ├── workflows/                 # Modular CI/CD pipelines per microservice
+│   └── pull_request_template.md   # Jira-linked PR template
+├── docs/                          # SAD, ATAM/QuaDAI assessments, and diagrams
 ├── infrastructure/
-│   ├── terraform/                 # Módulos IaC (VPC, EKS, Fargate, ECR, BD)
-│   └── docker-compose.local.yml   # Stack local (PostgreSQL, Redis, RabbitMQ, Kafka)
-├── services/                      # 10 Microservicios Java Spring Boot
+│   ├── terraform/                 # IaC modules (VPC, EKS, Fargate, ECR, DB)
+│   └── docker-compose.local.yml   # Local stack (PostgreSQL, Redis, RabbitMQ, Kafka)
+├── services/                      # 10 Java Spring Boot microservices
 │   ├── ms-01-iot-ingestion/
 │   ├── ms-02-analytics/
 │   ├── ms-03-identity-auth/
@@ -45,82 +32,58 @@ roomiesmart-aws-lake/
 │   └── ms-10-reporting-n8n/
 ├── .gitignore
 └── README.md
-```
 
----
+🧩 Microservices Catalog and Roadmap (Scrum)
+ID	Microservice	Responsibility	Persistence / Broker	Sprint	Status
+MS-03	ms-03-identity-auth	JWT authentication, RBAC/ABAC, and session revocation	Redis / API Gateway	Sprint 1	🚧 In Progress
+MS-04	ms-04-property-catalog	Management of buildings, rooms, sensors, and contracts	Supabase / RDS PostgreSQL	Sprint 1	🚧 In Progress
+MS-01	ms-01-iot-ingestion	Raw noise (dB) and energy (kWh) telemetry ingestion	MQTT → Kafka / DynamoDB	Sprint 2	⏳ Pending
+MS-08	ms-08-datalake-etl	Apache Parquet compression and historical data archiving	Kafka → Amazon S3	Sprint 2	⏳ Pending
+MS-06	ms-06-ai-orchestrator	Violation assessment using Amazon Bedrock + Circuit Breaker	Kafka → RabbitMQ / DocumentDB	Sprint 3	⏳ Pending
+MS-07	ms-07-notifications	Alert dispatching with anti-spam Rate Limiting	RabbitMQ / Redis	Sprint 3	⏳ Pending
+MS-05	ms-05-billing	ACID-compliant split billing and Idempotent Consumer	Kafka / RabbitMQ → Aurora	Sprint 4	⏳ Pending
+MS-09	ms-09-audit-ledger	Immutable recording of critical events for auditing	Kafka → Amazon Keyspaces	Sprint 4	⏳ Pending
+MS-02	ms-02-analytics	GraphQL API and serverless analytical queries (CQRS)	Amazon S3 + Athena	Sprint 5	⏳ Pending
+MS-10	ms-10-reporting-n8n	Monthly PDF reports and cold backups (Disaster Recovery)	n8n / On-Premise VPN	Sprint 5	⏳ Pending
+🚀 Quick Start (Local Environment)
+Prerequisites
+Java JDK 21 and Maven 3.9+
+Docker and Docker Compose
+Terraform 1.7+ (for AWS deployments)
+1. Start the Local Infrastructure
 
-## 🧩 Catálogo de Microservicios y Roadmap (Scrum)
+Launch PostgreSQL, Redis, RabbitMQ, and Apache Kafka without consuming AWS credits:
 
-| ID | Microservicio | Responsabilidad | Persistencia / Broker | Sprint | Estado |
-| :--- | :--- | :--- | :--- | :---: | :---: |
-| **MS-03** | `ms-03-identity-auth` | Autenticación JWT, RBAC/ABAC y revocación de sesiones | Redis / API Gateway | Sprint 1 | 🚧 En desarrollo |
-| **MS-04** | `ms-04-property-catalog` | Gestión de edificios, habitaciones, sensores y contratos | Supabase / RDS PostgreSQL | Sprint 1 | 🚧 En desarrollo |
-| **MS-01** | `ms-01-iot-ingestion` | Ingesta de telemetría cruda de ruido (dB) y energía (kWh) | MQTT → Kafka / DynamoDB | Sprint 2 | ⏳ Pendiente |
-| **MS-08** | `ms-08-datalake-etl` | Compresión Apache Parquet y archivado histórico | Kafka → Amazon S3 | Sprint 2 | ⏳ Pendiente |
-| **MS-06** | `ms-06-ai-orchestrator` | Evaluación de infracciones con Amazon Bedrock + Circuit Breaker | Kafka → RabbitMQ / DocumentDB | Sprint 3 | ⏳ Pendiente |
-| **MS-07** | `ms-07-notifications` | Despacho de alertas con *Rate Limiting* anti-spam | RabbitMQ / Redis | Sprint 3 | ⏳ Pendiente |
-| **MS-05** | `ms-05-billing` | Facturación fraccionada ACID e *Idempotent Consumer* | Kafka / RabbitMQ → Aurora | Sprint 4 | ⏳ Pendiente |
-| **MS-09** | `ms-09-audit-ledger` | Registro inmutable de eventos críticos para auditoría | Kafka → Amazon Keyspaces | Sprint 4 | ⏳ Pendiente |
-| **MS-02** | `ms-02-analytics` | API GraphQL y consultas analíticas *serverless* (CQRS) | Amazon S3 + Athena | Sprint 5 | ⏳ Pendiente |
-| **MS-10** | `ms-10-reporting-n8n` | Reportes mensuales PDF y respaldos en frío (*Disaster Recovery*) | n8n / On-Premise VPN | Sprint 5 | ⏳ Pendiente |
-
----
-
-## 🚀 Inicio Rápido (Entorno Local)
-
-### Prerrequisitos
-* **Java JDK 21** y **Maven 3.9+**
-* **Docker** y **Docker Compose**
-* **Terraform 1.7+** (para despliegues en AWS)
-
-### 1. Levantar la infraestructura local
-Inicia PostgreSQL, Redis, RabbitMQ y Apache Kafka sin consumir créditos de AWS:
-
-```bash
+bash
 docker compose -f infrastructure/docker-compose.local.yml up -d
-```
 
-* **RabbitMQ Management UI:** `http://localhost:15672` (`guest` / `guest`)
-* **PostgreSQL:** `localhost:5432` (`rs_admin` / `rs_password`, DB: `roomiesmart_db`)
-* **Redis:** `localhost:6379`
-* **Apache Kafka:** `localhost:9092`
-
-### 2. Ejecutar un microservicio
-
-```bash
+RabbitMQ Management UI: http://localhost:15672 (guest / guest)
+PostgreSQL: localhost:5432 (rs_admin / rs_password, DB: roomiesmart_db)
+Redis: localhost:6379
+Apache Kafka: localhost:9092
+2. Run a Microservice
+bash
 cd services/ms-03-identity-auth
 mvn spring-boot:run
-```
 
-### 3. Detener el entorno local
-
-```bash
+3. Stop the Local Environment
+bash
 docker compose -f infrastructure/docker-compose.local.yml down
-```
 
----
+🔄 GitFlow, CI/CD, and Jira Workflow
 
-## 🔄 Flujo de Trabajo GitFlow, CI/CD y Jira
+This repository is integrated with Jira Software through GitHub for Jira, enabling traceability and automation of the Scrum board:
 
-Este repositorio está integrado con **Jira Software** mediante *GitHub for Jira* para trazabilidad y automatización del tablero Scrum:
+Main branches: main (production / CD deployment to AWS ECR) and develop (Sprint integration).
+Branch naming convention: feature/RS-<ID>-<short-description> (automatically transitions the ticket to In Progress).
+Commit convention: RS-<ID> <type>(<service>): <message>
+Example: RS-15 feat(ms-03): implement JWT generation and Redis blacklist
+Pull Requests: Every PR targeting develop or main automatically triggers the GitHub Actions pipeline for the modified microservice (unit tests + Dockerfile validation) and moves the Jira ticket to In Review (and to Done after the merge).
+📚 Project Documentation
+Confluence (SAD and C4/UML Diagrams): [Link to your Confluence space]
+Scrum Board (Jira): [Link to your Jira project]
+Architecture Assessment (ATAM & QuaDAI): Available in the /docs directory.
+👨‍💻 Author
 
-* **Ramas principales:** `main` (producción / despliegue CD a AWS ECR) y `develop` (integración por Sprint).
-* **Convención de ramas:** `feature/RS-<ID>-<descripcion-corta>` (transiciona automáticamente el ticket a *In Progress*).
-* **Convención de commits:** `RS-<ID> <tipo>(<servicio>): <mensaje>`  
-  *Ejemplo:* `RS-15 feat(ms-03): implement JWT generation and Redis blacklist`
-* **Pull Requests:** Todo PR hacia `develop` o `main` dispara automáticamente el pipeline de **GitHub Actions** del microservicio modificado (pruebas unitarias + verificación de `Dockerfile`) y mueve el ticket en Jira a *In Review* (y a *Done* tras el *merge*).
-
----
-
-## 📚 Documentación del Proyecto
-
-* **Confluence (SAD y Diagramas C4/UML):** `[Enlace a tu espacio de Confluence]`
-* **Tablero Scrum (Jira):** `[Enlace a tu proyecto de Jira]`
-* **Evaluación de Arquitectura (ATAM & QuaDAI):** Disponible en la carpeta `/docs`
-
----
-
-## 👨‍💻 Autor
-
-**Luis André Luna Palacios**  
-Ingeniería en Sistemas de Información — Universidad Central del Ecuador (UCE)
+Jonathan David Plaza Nieto
+Information Systems Engineering — Central University of Ecuador (UCE)
