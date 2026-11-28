@@ -2,48 +2,54 @@ name: CI/CD - MS-03 Identity & Auth
 
 on:
   pull_request:
-    branches: [ develop, main ]
+    branches: [ dev, qa, prod, main ]
     paths:
       - 'services/ms-03-identity-auth/**'
+      - '.github/workflows/ci-ms-03.yml'
   push:
-    branches: [ develop, main ]
+    branches: [ dev, qa, prod, main ]
     paths:
       - 'services/ms-03-identity-auth/**'
+      - '.github/workflows/ci-ms-03.yml'
 
 jobs:
-  # Etapa 2: Integración Continua (Pruebas y Build)
-  ci-build-and-test:
-    name: Unit Tests & Maven Build
+  # Se ejecuta en dev, qa, prod y main
+  ci-unit-tests:
+    name: CI - Unit Tests & Maven Build
     runs-on: ubuntu-latest
-    if: hashFiles('services/ms-03-identity-auth/pom.xml') != ''
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: 'maven'
-
+          cache-dependency-path: 'services/ms-03-identity-auth/pom.xml'
       - name: Run Unit Tests
         working-directory: services/ms-03-identity-auth
-        run: mvn clean test
+        run: mvn clean test -B
 
+  # Se ejecuta al pasar a qa, prod o main
+  qa-docker-and-functional:
+    name: QA - Functional/Load & Docker Verify
+    needs: ci-unit-tests
+    if: github.base_ref == 'qa' || github.ref == 'refs/heads/qa' || github.ref == 'refs/heads/prod' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       - name: Verify Docker Build
         if: hashFiles('services/ms-03-identity-auth/Dockerfile') != ''
         working-directory: services/ms-03-identity-auth
-        run: docker build -t roomiesmart-ms-03:ci-test .
+        run: docker build -t roomiesmart-ms-03:qa-check .
 
-  # Etapa 3 y 4: Publicación en AWS ECR (se activa al hacer merge a main)
-  cd-push-ecr:
-    name: Push Docker Image to AWS ECR
-    needs: ci-build-and-test
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  # Se ejecuta solo al hacer merge a prod o main (con aprobación del ingeniero en prod)
+  cd-deploy-aws:
+    name: CD - Push to AWS ECR
+    needs: qa-docker-and-functional
+    environment: prod
+    if: (github.ref == 'refs/heads/prod' || github.ref == 'refs/heads/main') && github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Placeholder CD AWS ECR
-        run: echo "Listo para conectar credenciales de AWS Academy Learner Lab y subir a ECR"
+      - uses: actions/checkout@v4
+      - name: Deploy Placeholder
+        run: echo "Despliegue listo hacia AWS ECR / EKS / Fargate"
