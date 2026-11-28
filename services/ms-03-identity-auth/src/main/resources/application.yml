@@ -36,3 +36,9 @@ resilience4j:
     instances:
       defaultService:
         timeoutDuration: 3s
+security:
+  jwt:
+    # En AWS (ECS/Fargate) se inyectará por AWS Secrets Manager
+    secret: ${JWT_SECRET:Um9vbWllU21hcnRTdXBlclNlY3JldEtleUZvckxvY2FsRGV2MjAyNiE=}
+    access-token-expiration-seconds: 3600
+    refresh-token-expiration-seconds: 604800
